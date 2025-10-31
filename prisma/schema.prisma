@@ -1,0 +1,26 @@
+// prisma/schema.prisma
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    avatar    String?
+    username  String
+    email     String   @unique
+    date_of_birth DateTime
+    password  String
+    role      String   @default("ROLE_USER")
+    weight    Float
+    height    Float
+    gender    String
+    goal      String
+    connected Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

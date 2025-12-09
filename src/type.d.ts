@@ -13,3 +13,7 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface JwtPayload {
+  userId: number;
+  username: string;
+}

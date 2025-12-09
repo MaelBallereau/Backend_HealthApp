@@ -1,26 +1,61 @@
-// prisma/schema.prisma
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id        Int      @id @default(autoincrement())
-    avatar    String?
-    username  String
-    email     String   @unique
-    date_of_birth DateTime
-    password  String
-    role      String   @default("ROLE_USER")
-    weight    Float
-    height    Float
-    gender    String
-    goal      String
-    connected Boolean  @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id                    Int            @id @default(autoincrement())
+  avatar                String?
+  username              String
+  email                 String         @unique
+  date_of_birth         DateTime
+  password              String
+  role                  String         @default("ROLE_USER")
+  weight                Float
+  height                Float
+  gender                String
+  goal                  String
+  connected             Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  sentNotifications     Notification[] @relation("SentNotifications")
+  receivedNotifications Notification[] @relation("ReceivedNotifications")
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  senderId   Int?
+  sender     User?    @relation("SentNotifications", fields: [senderId], references: [id])
+  recipients User[]   @relation("ReceivedNotifications")
+
+  @@index([senderId], map: "Notification_senderId_fkey")
+}
+
+model Exercice {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  categoryId  Int
+  category    Category @relation("Exercices", fields: [categoryId], references: [id])
+
+  @@index([categoryId], map: "Exercice_categoryId_fkey")
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  exercices Exercice[] @relation("Exercices")
 }
